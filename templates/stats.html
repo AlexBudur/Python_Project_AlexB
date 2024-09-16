@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Chart Example</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .chart-container {
+            width: 400px;
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chart-container">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <!-- Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Chart.js configuration
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        function deleteMessage() {
+            // Get the input value
+            const inputValue = document.getElementById('textInput').value;
+
+            // Create an AJAX request
+            const xhr = new XMLHttpRequest();
+            xhr.open('DELETE', 'http://localhost:4000/person/' + inputValue, true);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        alert('Id was deleted');
+                        window.href('/')
+                        document.getElementById('textInput').value = '';
+                    } else {
+                        alert('Error deleting message');
+                    }
+                }
+            };
+            xhr.send(JSON.stringify({
+                data: inputValue
+            }));
+        }
+
+        function loadChart(value) {
+            // Get the input value
+            // Create an AJAX request
+            console.log("hereeeee")
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'http://localhost:4000/salaries/'+value, true);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            xhr.onreadystatechange = function () {
+                console.log("start running")
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        renderChart(xhr.response)
+                    } else {
+                        console.log("aiciiii")
+                        alert('Error deleting message');
+                        
+                    }
+                } else {
+                    console.log('not ready')
+                }
+            };
+            xhr.send(null);
+            // xhr.send(JSON.stringify({ data: inputValue }));
+        }
+        loadChart(0)
+
+        function renderChart(response){
+            console.log('from render chart')
+            jsonResponse=JSON.parse((response))
+            console.log(jsonResponse)
+            const myChart = new Chart(ctx, {
+                            type: 'bar', // Chart type: bar, line, pie, etc.
+                            data: {
+                                labels: jsonResponse['nume'],//['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                                datasets: [{
+                                    label: 'Salarii barosani',
+                                    data: jsonResponse['salarii'],//[12, 19, 3, 5, 2, 3, 7],
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+        }
+    </script>
+</body>
+
+</html>

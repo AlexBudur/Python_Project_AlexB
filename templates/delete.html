@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input and Delete Button</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #FF4136;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function deleteMessage() {
+            // Get the input value
+            const inputValue = document.getElementById('textInput').value;
+            
+            // Create an AJAX request
+            const xhr = new XMLHttpRequest();
+            xhr.open('DELETE', 'http://localhost:4000/person/'+inputValue, true);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        alert('Id was deleted');
+                        window.href('/')
+                        document.getElementById('textInput').value = '';
+                    } else {
+                        alert('Error deleting message');
+                    }
+                }
+            };
+            xhr.send(JSON.stringify({ data: inputValue }));
+        }
+    </script>
+</head>
+<body>
+    <div class="input-container">
+        <input type="text" id="textInput" placeholder="Enter text here">
+        <button class="button" onclick="deleteMessage()">Delete</button>
+    </div>
+    
+</body>
+</html>
